@@ -36,8 +36,7 @@
       <span class="tab" data-g="C">C级 <span class="tc">51</span></span>
       <span class="tab" data-g="D">D级 <span class="tc">25</span></span>
     </div>
-    <div class="rsum" id="sum"></div>
-    <div class="sx">
+        <div class="sx">
       <table>
         <thead><tr>
           <th>排名</th><th>评级</th><th>操盘手</th><th>城市</th><th>门店数</th>
@@ -114,7 +113,6 @@ function renderTable(g){
   list.sort(function(a,b){return a.rank-b.rank});
   var n=list.length,avg=n?(list.reduce(function(s,p){return s+(p.total||0)},0)/n).toFixed(1):"-",
       mx=n?list.reduce(function(m,p){return(p.total||0)>m.total?p:m},list[0]):null;
-  document.getElementById("sum").innerHTML="共 <b>"+n+"</b> 人 &nbsp;|&nbsp; 平均总得分 <b>"+avg+"</b>"+(mx?" &nbsp;|&nbsp; 最高 <b>"+mx.total+"</b> ("+mx.name+")":"");
   if(!n){document.getElementById("tb").innerHTML='<tr><td colspan="15" class="em">当前评级暂无数据</td></tr>';return}
   var h="";
   list.forEach(function(p){
