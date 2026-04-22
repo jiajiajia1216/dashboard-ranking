@@ -26,12 +26,18 @@ body::before{content:"";position:fixed;inset:0;z-index:0;background:radial-gradi
 .sbtn:hover{opacity:.85}
 .sh{font-size:11px;color:var(--t3);margin-left:4px}
 .res{margin-top:12px;display:none}.res.show{display:block}
-.rh{display:flex;align-items:center;gap:12px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
-.rn2{font-size:20px;font-weight:800}
-.rmi{font-size:12px;color:var(--t2)}
-.rtot{display:flex;align-items:center;gap:16px;padding:14px 16px;border-radius:10px;background:rgba(100,140,200,.06);flex-wrap:wrap}
-.rtot .ts{font-size:32px;font-weight:900}.rtot .tl{font-size:12px;color:var(--t3)}
+.rh{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+.rn2{font-size:22px;font-weight:800}
+.rmi{font-size:13px;color:var(--t2)}
+.rtot{display:flex;align-items:center;gap:20px;padding:16px 20px;border-radius:10px;background:rgba(100,140,200,.06);margin-bottom:14px;flex-wrap:wrap}
+.rtot .ts{font-size:36px;font-weight:900}.rtot .tl{font-size:12px;color:var(--t3)}
 .nr{text-align:center;padding:24px;color:var(--t3);font-size:13px}
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.res-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;background:rgba(100,140,200,.05);border:1px solid rgba(100,140,200,.08)}
+.res-label{font-size:12px;color:var(--t3);min-width:48px;flex-shrink:0}
+.res-bar{flex:1;height:8px;background:rgba(100,140,200,.1);border-radius:4px;overflow:hidden;min-width:40px}
+.res-fill{height:100%;border-radius:4px;transition:width .4s ease}
+.res-val{font-size:16px;font-weight:800;min-width:28px;text-align:right}
 .tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
 .tabs .tl{font-size:12px;color:var(--t3);margin-right:2px}
 .tab{padding:5px 14px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid var(--bd);background:transparent;color:var(--t2);cursor:pointer;transition:all .2s;user-select:none;flex-shrink:0}
@@ -67,6 +73,9 @@ tbody tr{transition:background .15s}tbody tr:hover{background:rgba(34,211,238,.0
 .card{padding:12px;border-radius:8px}.tabs{gap:4px}.tab{padding:4px 10px;font-size:11px}
 table{font-size:11px;min-width:760px}th{padding:6px 4px;font-size:10px}td{padding:5px 4px}
 .gg{font-size:12px;padding:2px 8px}.rk{width:20px;height:20px;font-size:10px}
+.res-grid{grid-template-columns:repeat(2,1fr)}
+.res-item{padding:8px 10px}
+.res-val{font-size:14px}
 }
 </style>
 </head>
@@ -126,6 +135,24 @@ var DIM=["企微回复","询价转化","拉新","O2O成交","无人时长","巡�
 var DK=["score_qw","score_xj","score_lx","score_o2o","score_wr","score_xd","score_px","score_hy","score_tb"];
 var DM=[10,15,10,10,10,10,10,10,10];
 var GC={A:"#4ade80",B:"#60a5fa",C:"#fb923c",D:"#f87171"};
+function doSearch(){
+  var q=document.getElementById("q").value.trim().toLowerCase(),rs=document.getElementById("rs");
+  if(!q){rs.classList.remove("show");return}
+  var found=ALL.filter(function(p){return p.name.toLowerCase().indexOf(q)>=0});
+  if(!found.length){rs.innerHTML='<div class="nr">未找到匹配的操盘手</div>';rs.classList.add("show");return}
+  var p=found[0],bc=GC[p.grade]||"#60a5fa",gc=p.grade==="A"?"gA":p.grade==="B"?"gB":p.grade==="C"?"gC":"gD",
+      dims=["企微回复","询价转化","拉新","O2O成交","无人时长","巡店","培训","会议","通报"],
+      keys=["score_qw","score_xj","score_lx","score_o2o","score_wr","score_xd","score_px","score_hy","score_tb"],
+      mx=[10,15,10,10,10,10,10,10,10],items="";
+  dims.forEach(function(d,i){
+    var v=p[keys[i]]||0,pc=Math.round(v/mx[i]*100),fc=v>=mx[i]?"var(--gn)":v>0?bc:"var(--t3)";
+    items+='<div class="res-item"><span class="res-label">'+d+'</span><div class="res-bar"><div class="res-fill" style="width:'+pc+'%;background:'+fc+'"></div></div><span class="res-val" style="color:'+fc+'">'+v+'</span></div>';
+  });
+  rs.innerHTML='<div class="rh"><span class="rn2" style="color:'+bc+'">'+p.name+'</span><span class="rmi">'+(p.city||"")+" · "+p.stores+'家门店</span><span class="gg '+gc+'">'+p.grade+'级</span></div>'+
+    '<div class="rtot"><div><div class="tl">总得分 · 排名 #'+p.rank+'</div><div class="ts" style="color:'+bc+'">'+p.total+'</div></div></div>'+
+    '<div class="res-grid">'+items+'</div>';
+  rs.classList.add("show");
+}
 function renderTable(g){
   var list=g==="ALL"?ALL:ALL.filter(function(p){return p.grade===g});
   list.sort(function(a,b){return a.rank-b.rank});
@@ -150,19 +177,6 @@ document.getElementById("tabs").addEventListener("click",function(e){
 });
 document.getElementById("sb").addEventListener("click",doSearch);
 document.getElementById("q").addEventListener("keydown",function(e){if(e.key==="Enter")doSearch()});
-function doSearch(){
-  var q=document.getElementById("q").value.trim().toLowerCase(),rs=document.getElementById("rs");
-  if(!q){rs.classList.remove("show");return}
-  var found=ALL.filter(function(p){return p.name.toLowerCase().indexOf(q)>=0});
-  if(!found.length){rs.innerHTML='<div class="nr">未找到匹配的操盘手</div>';rs.classList.add("show");return}
-  var p=found[0],bc=GC[p.grade]||"#60a5fa",gc=p.grade==="A"?"gA":p.grade==="B"?"gB":p.grade==="C"?"gC":"gD",
-      dims=["企微回复","询价转化","拉新","O2O成交","无人时长","巡店","培训","会议","通报"],
-      keys=["score_qw","score_xj","score_lx","score_o2o","score_wr","score_xd","score_px","score_hy","score_tb"],
-      mx=[10,15,10,10,10,10,10,10,10],bars="";
-  dims.forEach(function(d,i){var v=p[keys[i]]||0,pc=Math.round(v/mx[i]*100);bars+='<div style="display:flex;align-items:center;gap:8px"><span style="width:48px;font-size:12px;color:var(--t3);flex-shrink:0">'+d+'</span><div class="pb" style="flex:1"><div class="pf" style="width:'+pc+'%;background:'+bc+'"></div></div><span style="width:28px;text-align:right;font-size:12px;font-weight:600">'+v+'</span></div>'});
-  rs.innerHTML='<div class="rh"><span class="rn2" style="color:'+bc+'">'+p.name+'</span><span class="rmi">'+(p.city||"")+" · "+p.stores+'家门店</span><span class="gg '+gc+'" style="font-size:14px">'+p.grade+'级</span></div><div class="rtot"><div><div class="tl">总得分 · 排名 #'+p.rank+'</div><div class="ts" style="color:'+bc+'">'+p.total+'</div></div></div><div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">'+bars+'</div>';
-  rs.classList.add("show");
-}
 var dimAvg=DIM.map(function(_,j){var s=0;ALL.forEach(function(p){s+=(p[DK[j]]||0)});return Math.round(s/ALL.length*10)/10});
 new Chart(document.getElementById("ch1").getContext("2d"),{type:"radar",data:{labels:DIM,datasets:[
 {label:"平均得分",data:dimAvg,borderColor:"#22d3ee",backgroundColor:"rgba(34,211,238,.12)",borderWidth:2,pointRadius:3,pointBackgroundColor:"#22d3ee"},
