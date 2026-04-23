@@ -14,7 +14,6 @@
     <h1>操盘手排名通报</h1>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <span class="mt">数据截至 2026/4/22</span>
-      <span class="bdg">本月第22天</span>
     </div>
   </div>
   <div class="card sc">
@@ -81,7 +80,7 @@ function doSearch(){
         detail="";
     if(i===6){detail='<span class="res-detail">\u57f9\u8bad <b>'+p.px_sessions+'</b>\u573a \u00b7 \u8986\u76d6 <b>'+p.px_cover+'</b>\u4eba</span>';}
     else if(i===7){detail='<span class="res-detail">\u4f1a\u8bae <b>'+p.hy_val+'</b>\u6b21</span>';}
-    else if(i===8){detail='<span class="res-detail">\u901a\u62a5 <b>'+p.tb_val+'</b>/'+22次</span>';}
+    else if(i===8){detail='<span class="res-detail">\u901a\u62a5 <b>'+p.tb_val+'</b>/22次</span>';}
     else if(i===5){detail='<span class="res-detail">巡店 <b>'+p.xd_val+'</b>/'+p.stores+'次 · 完成率 <b>'+Math.round(p.xd_val/p.stores*100)+'%</b></span>';}
     else if(i===2){detail='<span class="res-detail">日均拉新 <b>'+p.lx_val+'</b>/店</span>';}
     else{var rv=rates[i];if(rv!==undefined&&rv!==null){detail='<span class="res-detail">达成 <b>'+fmtRate(rv)+'</b></span>';}}
